@@ -12,6 +12,7 @@ module crossbar_switch #(
 
     collision_monitor #(N) monitor_inst (       // Instancia Monitor de Colisão
         .select(select),
+        .output_enable(output_enable),
         .collision_error(collision_error)
     );
 
