@@ -1,12 +1,12 @@
 //@Hyago
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module tb_Crossbar_Switch;
 
-  parameter N   = 8;
-  parameter W8  = 8;
-  parameter W16 = 16;
-  parameter W10 = 10;
+  localparam N   = 8;
+  localparam W8  = 8;
+  localparam W16 = 16;
+  localparam W10 = 10;
 
   localparam SELW = $clog2(N);
 
@@ -54,8 +54,26 @@ module tb_Crossbar_Switch;
 
   integer i;
 
+  // Sinais que serão monitorados no console (a cada mudança de valor, é exibido no console da simulação)
   initial begin
-    $display("\n=== TB CROSSBAR SIMPLES (N=8 | W=8,16,10) ===");
+    $monitor("Tempo: %03tns | Rotas: {%h.%h.%h.%h.%h.%h.%h.%h} | Output Enable: {%b.%b}\n  >> (W=8)  Data In: {%h.%h.%h.%h.%h.%h.%h.%h}                 | Data Out: {%h.%h.%h.%h.%h.%h.%h.%h}                 | Collision Error: %b\n  >> (W=16) Data In: {%h.%h.%h.%h.%h.%h.%h.%h} | Data Out: {%h.%h.%h.%h.%h.%h.%h.%h} | Collision Error: %b\n  >> (W=10) Data In: {%h.%h.%h.%h.%h.%h.%h.%h}         | Data Out: {%h.%h.%h.%h.%h.%h.%h.%h}         | Collision Error: %b",
+       $time,
+	   select[7*SELW+:SELW], select[6*SELW+:SELW], select[5*SELW+:SELW], select[4*SELW+:SELW], select[3*SELW+:SELW], select[2*SELW+:SELW], select[SELW+:SELW], select[0+:SELW],
+	   output_enable[4+:4], output_enable[0+:4],
+	   data_in8[7*W8+:W8], data_in8[6*W8+:W8], data_in8[5*W8+:W8], data_in8[4*W8+:W8], data_in8[3*W8+:W8], data_in8[2*W8+:W8], data_in8[W8+:W8], data_in8[0+:W8],
+	   data_out8[7*W8+:W8], data_out8[6*W8+:W8], data_out8[5*W8+:W8], data_out8[4*W8+:W8], data_out8[3*W8+:W8], data_out8[2*W8+:W8], data_out8[W8+:W8], data_out8[0+:W8],
+	   collision_error8,
+	   data_in16[7*W16+:W16], data_in16[6*W16+:W16], data_in16[5*W16+:W16], data_in16[4*W16+:W16], data_in16[3*W16+:W16], data_in16[2*W16+:W16], data_in16[W16+:W16], data_in16[0+:W16],
+	   data_out16[7*W16+:W16], data_out16[6*W16+:W16], data_out16[5*W16+:W16], data_out16[4*W16+:W16], data_out16[3*W16+:W16], data_out16[2*W16+:W16], data_out16[W16+:W16], data_out16[0+:W16],
+	   collision_error16,
+	   data_in10[7*W10+:W10], data_in10[6*W10+:W10], data_in10[5*W10+:W10], data_in10[4*W10+:W10], data_in10[3*W10+:W10], data_in10[2*W10+:W10], data_in10[W10+:W10], data_in10[0+:W10],
+	   data_out10[7*W10+:W10], data_out10[6*W10+:W10], data_out10[5*W10+:W10], data_out10[4*W10+:W10], data_out10[3*W10+:W10], data_out10[2*W10+:W10], data_out10[W10+:W10], data_out10[0+:W10],
+	   collision_error10
+	   );
+  end
+
+  initial begin
+    $display("\n=== TB CROSSBAR SIMPLES (N=8 | W=8,16,10) ===\n");
 
     // -----------------------------
     // Inicialização + dados conhecidos
@@ -92,7 +110,7 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 1;
 
     #1;
-    $display("collision_error (esperado 0): %b", collision_error8);
+    $display("  >> collision_error (esperado 0): %b", collision_error8);
 
     #20;
 
@@ -108,7 +126,7 @@ module tb_Crossbar_Switch;
     select[2*SELW +: SELW] = 3;
 
     #1;
-    $display("collision_error (esperado 1): %b", collision_error8);
+    $display("  >> collision_error (esperado 1): %b", collision_error8);
 
     #20;
 
@@ -130,15 +148,15 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 7;
 
     #1;
-    $display("out4 W8 antes disable : %02h", data_out8[4*W8 +: W8]);
+    $display("  >> out4 W8 antes disable : %02h", data_out8[4*W8 +: W8]);
 
     output_enable[4] = 1'b0;
     #1;
-    $display("out4 W8 apos  disable : %02h (esperado 00)", data_out8[4*W8 +: W8]);
+    $display("  >> out4 W8 apos  disable : %02h (esperado 00)", data_out8[4*W8 +: W8]);
 
     output_enable[4] = 1'b1;
     #1;
-    $display("out4 W8 reenable      : %02h (volta ao valor)", data_out8[4*W8 +: W8]);
+    $display("  >> out4 W8 reenable      : %02h (volta ao valor)", data_out8[4*W8 +: W8]);
 
     #20;
 
@@ -146,7 +164,7 @@ module tb_Crossbar_Switch;
     // CASO 4 - Mudança Dinâmica (troca de rota durante dados)
     // muda os dados e a rota e observa a comutação
     // =========================================================
-    $display("\n[CASO 4] Mudança dinâmica (dados + rota)");
+    $display("\n[CASO 4] Mudanca dinamica (dados + rota)");
     output_enable = 8'b11111111;
 
     // rota inicial sel=i
@@ -161,7 +179,7 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 7;
 
     #1;
-    $display("out0 W8 (sel=0) antes: %02h", data_out8[0*W8 +: W8]);
+    $display("  >> out0 W8 (sel=0) antes: %02h", data_out8[0*W8 +: W8]);
 
     // muda dados "em transmissão"
     for (i = 0; i < N; i = i + 1) begin
@@ -181,7 +199,7 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 0;
 
     #1;
-    $display("out0 W8 (sel=7) apos : %02h (deve refletir nova rota+dado)", data_out8[0*W8 +: W8]);
+    $display("  >> out0 W8 (sel=7) apos : %02h (deve refletir nova rota+dado)", data_out8[0*W8 +: W8]);
 
     #20;
 
@@ -199,7 +217,7 @@ module tb_Crossbar_Switch;
     select[2*SELW +: SELW] = 7;
 
     #1;
-    $display("collision_error com ambos ativos (esperado 1): %b", collision_error8);
+    $display("  >> collision_error com ambos ativos (esperado 1): %b", collision_error8);
 
     // mascara: desabilita saídas com colisão
     output_enable[2] = 1'b0;
@@ -210,9 +228,9 @@ module tb_Crossbar_Switch;
     output_enable[7] = 1'b0;
 
     #1;
-    $display("collision_error saídas colididas desativadas (esperado 0): %b", collision_error8);
+    $display("  >> collision_error saidas colididas desativadas (esperado 0): %b", collision_error8);
 
-    $display("\nFim do teste.");
+    $display("\nFim do teste.\n");
     $finish;
   end
 
