@@ -498,145 +498,9 @@ module tb_collision_monitor;
 
 endmodule
 ```
-
 ---
 
-## `crossbar_nxn` - Dados
-
-Este é o módulo top Level, de um Crossbar Switch NxN, que roteia N entradas de dados para N saídas, com os requisitos que foi solicitado no Tema deste Projeto:
-
-- [x]  Seleção indendente por saída (cada saída escolhe qual entrada quer).
-- [x]  enable individual, por saída (pode desligar uma saída para “mascarar colisão, ou ativar”.
-- [x]  detecção global de colisão (se duas saídas ou mais escolherem a mesma entrada)
-
-### Entradas
-
-- `data_in [N*W-1:0]`  É o barramento de entrada que contém N palavras de W bits concatenados.
-- `select [N*log2(N)-1:0]` Vetor com N seletores, um por saída (Barrel Shifter).
-- `output_enable [N-1:0]` Enable individual por saída, caso no índice do vetor, esteja “1”, indica que esta ativo (roteia o dado selecionado) caso contrário “0”, saída forçada para zero.
-
-### Saídas
-
-- `data_out [N*W-1:0]` Barramento com N palavras de W bits cada, por saída.
-- `collision_error` Flag global que indica erro, igual anteriormente, “1” se duas ou mais saídas escolherem a mesma entrada, e “0”, se as seleções forem únicas.
-
-O módulo instancia inicialmente o `collision_monitor` e elecompara todos os seletores dentro de select, e levanta `collision_error` se houver repetição.
-
-Basicamente 1 barrel shifter por saída (uma linha por saída usando barrel shifter. Para cada saída i, (loop generate):
-
-→ Extraímos o seletor da saída com `sel`
-
-→ Rodamos o barrel Shifter, do barramento inteiro (`data_in`) usando `sel`
-
-Barrel Shifter rotaciona os N blocos de `data_in`  de forma circular. Com o comportamento esperado de um claássico Barrel Shifter.
-
-Depois disso, pega a posição 0 do barramento rotacionado, que passa a ser exatamente a entrada selecionada, sendo `shifted_bus[0*W +: W].`  Caso o `output_enable` estiver ativo, caso contrário concatena com zero.
-
-### Objetivo do testbench @Bruno
-
-- [x]  Validar roteamento **independente por saída** (cada saída escolhe a entrada desejada).
-- [x]  Validar `output_enable` **forçando saída para zero** quando desabilitado.
-- [x]  Validar `collision_error` **quando duas ou mais saídas escolhem a mesma entrada**.
-- [x]  Mostrar resultados de forma clara no console (`$display`) e na waveform.
-- [x]  N ≥ 8 e W≥8 testar automaticamente, (instancie várias vezes o crossbar igual o barrel shifter que eu fiz que você consegue resolver isso) Altere RB para o nome igual ao que temos na instancia.
-
-**Fase de Inicialização.**
-
-**Wave e Transcript**
-
-![image.png](./images/image%205.png)
-
-![image.png](./images/image%206.png)
-
-### **Teste 1 — Roteamento básico (Identidade, sem colisão)**
-
-Configuração:
-
-- `output_enable = 111...1` (todas as saídas ativas)
-- `select[i] = i`
-
-Esperado:
-
-- `data_out[i] = data_in[i]`
-- `collision_error = 0` (ninguém repetiu seleção)
-
-**Teste  Wave e Transcript**
-
-![image.png](image%207.png)
-
-![image.png](image%208.png)
-
----
-
-### **Teste 2 — Permutação (roteamento simultâneo e independente)**
-
-Configuração:
-
-- todas as saídas ativas
-- cada saída escolhe uma entrada **diferente** (ex.: `out0→in5`, `out1→in3`, …)
-
-Esperado:
-
-- `data_out[i]` bate com a entrada escolhida
-- `collision_error = 0` (sem repetição)
-
-Esse teste prova que o crossbar faz múltiplas conexões ao mesmo tempo.
-
-**Teste  Wave e Transcript**
-
-![image.png](./images/image%209.png)
-
-![image.png](./images/image%2010.png)
-
----
-
-### **Teste 3 — Colisão**
-
-Configuração:
-
-- duas saídas escolhem a **mesma** entrada (ex.: `out0→in4` e `out2→in4`)
-- saídas ativas
-
-Esperado:
-
-- `collision_error = 1`
-- as duas saídas envolvidas recebem o **mesmo dado** (o dado da entrada selecionada)
-
-Esse teste valida o monitoramento global de colisão.
-
-**Teste  Wave e Transcript**
-
-![image.png](./images/image%2011.png)
-
-![image.png](./images/image%2012.png)
-
----
-
-### **Teste 4 — `output_enable` (mascaramento por saída)**
-
-Configuração:
-
-- `select[i] = i` (identidade)
-- algumas saídas desligadas (ex.: `output_enable[3]=0` e `output_enable[6]=0`)
-
-Esperado:
-
-- `data_out[3] = 0` e `data_out[6] = 0`
-- as demais saídas continuam roteando normalmente
-
-Esse teste prova o “desligamento” individual e o comportamento de saída forçada a zero.
-
-**Teste  Wave e Transcript**
-
-![image.png](./images/image%2013.png)
-
-![image.png](./images/image%2014.png)
-
-![image.png](./images/image%2015.png)
-
-### **Teste 5 - Testando com variações de N≥8 e W≥8.**
-
-- [ ]  Prioridade é N=8 (teste N>8) W≥8. ( apresentar waves e terminal)
+### **Crossbar Switch NxN de N=8 e W≥8.**
 
 ```verilog
 module crossbar_switch #(
@@ -684,236 +548,6 @@ module crossbar_switch #(
 
 endmodule
 ```
-
----
-
-### Detalhes sobre a característica do Top Level Crossbar Switch NxN
-
-→ …
-
----
-
-- Código testbench @Bruno
-    
-    ```verilog
-    @Bruno
-    `timescale 1ns/1ps
-    
-    module tb_crossbar_switch;
-    
-      localparam N  = 8;
-      localparam W  = 8;
-      localparam RB = $clog2(N);
-    
-      reg  [N*W-1:0]  data_in;
-      reg  [N*RB-1:0] select;
-      reg  [N-1:0]    output_enable;
-    
-      wire [N*W-1:0]  data_out;
-      wire            collision_error;
-    
-      crossbar_switch #(
-        .N(N),
-        .W(W)
-      ) dut (
-        .data_in        (data_in),
-        .select         (select),
-        .output_enable  (output_enable),
-        .data_out       (data_out),
-        .collision_error(collision_error)
-      );
-    
-      
-      // Funções auxiliares (Helpers)
-     // Define que a saída out_idx vai selecionar a entrada in_idx.
-      task set_sel;
-        input integer out_idx;
-        input integer in_idx;
-        begin
-          select[out_idx*RB +: RB] = in_idx[RB-1:0];
-        end
-      endtask
-      
-    // Extrai a palavra W-bit da entrada idx a partir do vetor data_in
-      function [W-1:0] in_word;
-        input integer idx;
-        begin
-          in_word = data_in[idx*W +: W];
-        end
-      endfunction
-      
-    // Extrai a palavra W-bit da saída idx a partir do vetor data_out
-      function [W-1:0] out_word;
-        input integer idx;
-        begin
-          out_word = data_out[idx*W +: W];
-        end
-      endfunction
-    
-      // Compara a saída idx com o valor esperado exp.
-      // Se falhar, para simulação com $stop.
-      task expect_out;
-        input integer idx;
-        input [W-1:0] exp;
-        input [1023:0] label;
-        begin
-          if (out_word(idx) !== exp) begin
-            $display("FAIL: %s | out%0d=0x%0h esperado=0x%0h", label, idx, out_word(idx), exp);
-            $stop;
-          end else begin
-            $display("PASS: %s | out%0d=0x%0h", label, idx, out_word(idx));
-          end
-        end
-      endtask
-    
-    // Valida collision_error.
-      task expect_collision;
-        input exp;
-        input [1023:0] label;
-        begin
-          if (collision_error !== exp) begin
-            $display("FAIL: %s | collision_error=%b esperado=%b", label, collision_error, exp);
-            $stop;
-          end else begin
-            $display("PASS: %s | collision_error=%b", label, collision_error);
-          end
-        end
-      endtask
-      
-    // Carrega valores conhecidos nas entradas
-      task load_inputs;
-        integer k;
-        begin
-          for (k = 0; k < N; k = k + 1) begin
-            data_in[k*W +: W] = (8'hA0 + k[7:0]); // A0, A1, A2...
-          end
-        end
-      endtask
-    
-      // Mostra um resumo do estado atual:
-      // collision_error
-    
-      task print_summary;
-        input [1023:0] title;
-        integer k;
-        begin
-          $display("\n---- %s ----", title);
-          $display("collision_error=%b", collision_error);
-          for (k = 0; k < N; k = k + 1) begin
-            $display("out%0d: enable=%0d sel=%0d -> 0x%0h",
-                     k, output_enable[k], select[k*RB +: RB], out_word(k));
-          end
-        end
-      endtask
-    
-      integer i;
-    
-      initial begin
-        // evita X na wave para o integer i, colocando ele para iniciar em 0
-        i = 0;
-    
-        $display("============================================================");
-        $display("TB crossbar_switch | N=%0d W=%0d RB=%0d", N, W, RB);
-        $display("============================================================");
-    
-        // Init sinais do DUT
-        data_in = {N*W{1'b0}};
-        select  = {N*RB{1'b0}};
-        output_enable = {N{1'b0}};
-    
-        #5;
-    
-        load_inputs();
-    
-        $display("\nEntradas:");
-        for (i = 0; i < N; i = i + 1)
-          $display("in%0d = 0x%0h", i, in_word(i));
-    
-        // =========================================================
-        // TESTE 1: Identidade cada saída seleciona a entrada de mesmo índice
-        // =========================================================
-        $display("\n[TESTE 1] Identidade (sem colisao): out[i]=in[i]");
-        output_enable = {N{1'b1}};
-        for (i = 0; i < N; i = i + 1)
-          set_sel(i, i);
-        #1;
-    
-        for (i = 0; i < N; i = i + 1)
-        expect_out(i, in_word(i), "roteamento identidade");
-        expect_collision(1'b0, "sem colisao (sel diferentes)");
-        print_summary("RESUMO TESTE 1");
-    
-        // =========================================================
-        // TESTE 2: Permutacao configura as saídas para pegarem entradas diferentes
-        // =========================================================
-        $display("\n[TESTE 2] Permutacao (sem colisao): roteamento independente");
-        output_enable = {N{1'b1}};
-        if (N == 8) begin
-          set_sel(0, 5);
-          set_sel(1, 3);
-          set_sel(2, 7);
-          set_sel(3, 0);
-          set_sel(4, 2);
-          set_sel(5, 6);
-          set_sel(6, 1);
-          set_sel(7, 4);
-          #1;
-    
-          expect_out(0, in_word(5), "out0<-in5");
-          expect_out(1, in_word(3), "out1<-in3");
-          expect_out(2, in_word(7), "out2<-in7");
-          expect_out(3, in_word(0), "out3<-in0");
-          expect_out(4, in_word(2), "out4<-in2");
-          expect_out(5, in_word(6), "out5<-in6");
-          expect_out(6, in_word(1), "out6<-in1");
-          expect_out(7, in_word(4), "out7<-in4");
-          expect_collision(1'b0, "sem colisao (permuta sem repeticao)");
-          print_summary("RESUMO TESTE 2");
-        end else begin
-          $display("INFO: TESTE 2 foi escrito para N=8. Pulando.");
-        end
-    
-        // =========================================================
-        // TESTE 3: Colisao da out0 e out4
-        // =========================================================
-        $display("\n[TESTE 3] Colisao: out0 e out2 escolhem a mesma entrada (in4)");
-        output_enable = {N{1'b1}};
-        for (i = 0; i < N; i = i + 1)
-          set_sel(i, i);
-        set_sel(0, 4);
-        set_sel(2, 4);
-        #1;
-    
-        expect_out(0, in_word(4), "out0<-in4 (colisao)");
-        expect_out(2, in_word(4), "out2<-in4 (colisao)");
-        expect_collision(1'b1, "colisao deve ser 1 quando sel iguais");
-        print_summary("RESUMO TESTE 3");
-    
-        // =========================================================
-        // TESTE 4: output_enable **mascaramento da out3 e out6**
-        // =========================================================
-        $display("\n[TESTE 4] output_enable: saida desabilitada deve ser 0");
-        for (i = 0; i < N; i = i + 1)
-          set_sel(i, i);
-        output_enable = {N{1'b1}};
-        output_enable[3] = 1'b0;
-        output_enable[6] = 1'b0;
-        #1;
-    
-        expect_out(3, {W{1'b0}}, "out3 desabilitada -> 0");
-        expect_out(6, {W{1'b0}}, "out6 desabilitada -> 0");
-        expect_out(0, in_word(0), "out0 continua normal");
-        expect_out(7, in_word(7), "out7 continua normal");
-        print_summary("RESUMO TESTE 4");
-    
-        $display("\nFINAL: Todos os testes passaram.");
-        $finish;
-      end
-    
-    endmodule
-    ```
-    
-
 ---
 
 ## Testbench `tb_crossbar_nxn.v` @Hyago Vieira
@@ -959,30 +593,21 @@ endmodule
 
 ![image.png](./images/image%2022.png)
 
-> Observação: Não estamos colocando N≥8. Apenas N=8, se for testar outro valor de N, é necessário que seja, expoente de 2.
-> 
-
-2^2 = 4
-
-2^3 = 8
-
-2^4 = 16…
+> Observação: Não estamos colocando N≥8. Apenas N=8, se for testar outro valor de N, é necessário que seja, expoente de 2. Ex:  2^2 = 4, 2^3 = 8 ...
 
 > Caso N seja um número que não seja inteiro na equação que possui o shift dos dados com barrel shifter, log2(N) teremos um valor fracionado. E isto não foi algo definido no projeto.
-> 
 
 
 ## Testbench Crossbar Switch top level
 ```verilog
-//@Hyago
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module tb_Crossbar_Switch;
 
-  parameter N   = 8;
-  parameter W8  = 8;
-  parameter W16 = 16;
-  parameter W10 = 10;
+  localparam N   = 8;
+  localparam W8  = 8;
+  localparam W16 = 16;
+  localparam W10 = 10;
 
   localparam SELW = $clog2(N);
 
@@ -1030,8 +655,26 @@ module tb_Crossbar_Switch;
 
   integer i;
 
+  // Sinais que serão monitorados no console (a cada mudança de valor, é exibido no console da simulação)
   initial begin
-    $display("\n=== TB CROSSBAR SIMPLES (N=8 | W=8,16,10) ===");
+    $monitor("Tempo: %03tns | Rotas: {%h.%h.%h.%h.%h.%h.%h.%h} | Output Enable: {%b.%b}\n  >> (W=8)  Data In: {%h.%h.%h.%h.%h.%h.%h.%h}                 | Data Out: {%h.%h.%h.%h.%h.%h.%h.%h}                 | Collision Error: %b\n  >> (W=16) Data In: {%h.%h.%h.%h.%h.%h.%h.%h} | Data Out: {%h.%h.%h.%h.%h.%h.%h.%h} | Collision Error: %b\n  >> (W=10) Data In: {%h.%h.%h.%h.%h.%h.%h.%h}         | Data Out: {%h.%h.%h.%h.%h.%h.%h.%h}         | Collision Error: %b",
+       $time,
+	   select[7*SELW+:SELW], select[6*SELW+:SELW], select[5*SELW+:SELW], select[4*SELW+:SELW], select[3*SELW+:SELW], select[2*SELW+:SELW], select[SELW+:SELW], select[0+:SELW],
+	   output_enable[4+:4], output_enable[0+:4],
+	   data_in8[7*W8+:W8], data_in8[6*W8+:W8], data_in8[5*W8+:W8], data_in8[4*W8+:W8], data_in8[3*W8+:W8], data_in8[2*W8+:W8], data_in8[W8+:W8], data_in8[0+:W8],
+	   data_out8[7*W8+:W8], data_out8[6*W8+:W8], data_out8[5*W8+:W8], data_out8[4*W8+:W8], data_out8[3*W8+:W8], data_out8[2*W8+:W8], data_out8[W8+:W8], data_out8[0+:W8],
+	   collision_error8,
+	   data_in16[7*W16+:W16], data_in16[6*W16+:W16], data_in16[5*W16+:W16], data_in16[4*W16+:W16], data_in16[3*W16+:W16], data_in16[2*W16+:W16], data_in16[W16+:W16], data_in16[0+:W16],
+	   data_out16[7*W16+:W16], data_out16[6*W16+:W16], data_out16[5*W16+:W16], data_out16[4*W16+:W16], data_out16[3*W16+:W16], data_out16[2*W16+:W16], data_out16[W16+:W16], data_out16[0+:W16],
+	   collision_error16,
+	   data_in10[7*W10+:W10], data_in10[6*W10+:W10], data_in10[5*W10+:W10], data_in10[4*W10+:W10], data_in10[3*W10+:W10], data_in10[2*W10+:W10], data_in10[W10+:W10], data_in10[0+:W10],
+	   data_out10[7*W10+:W10], data_out10[6*W10+:W10], data_out10[5*W10+:W10], data_out10[4*W10+:W10], data_out10[3*W10+:W10], data_out10[2*W10+:W10], data_out10[W10+:W10], data_out10[0+:W10],
+	   collision_error10
+	   );
+  end
+
+  initial begin
+    $display("\n=== TB CROSSBAR SIMPLES (N=8 | W=8,16,10) ===\n");
 
     // -----------------------------
     // Inicialização + dados conhecidos
@@ -1068,7 +711,7 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 1;
 
     #1;
-    $display("collision_error (esperado 0): %b", collision_error8);
+    $display("  >> collision_error (esperado 0): %b", collision_error8);
 
     #20;
 
@@ -1084,7 +727,7 @@ module tb_Crossbar_Switch;
     select[2*SELW +: SELW] = 3;
 
     #1;
-    $display("collision_error (esperado 1): %b", collision_error8);
+    $display("  >> collision_error (esperado 1): %b", collision_error8);
 
     #20;
 
@@ -1106,15 +749,15 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 7;
 
     #1;
-    $display("out4 W8 antes disable : %02h", data_out8[4*W8 +: W8]);
+    $display("  >> out4 W8 antes disable : %02h", data_out8[4*W8 +: W8]);
 
     output_enable[4] = 1'b0;
     #1;
-    $display("out4 W8 apos  disable : %02h (esperado 00)", data_out8[4*W8 +: W8]);
+    $display("  >> out4 W8 apos  disable : %02h (esperado 00)", data_out8[4*W8 +: W8]);
 
     output_enable[4] = 1'b1;
     #1;
-    $display("out4 W8 reenable      : %02h (volta ao valor)", data_out8[4*W8 +: W8]);
+    $display("  >> out4 W8 reenable      : %02h (volta ao valor)", data_out8[4*W8 +: W8]);
 
     #20;
 
@@ -1122,7 +765,7 @@ module tb_Crossbar_Switch;
     // CASO 4 - Mudança Dinâmica (troca de rota durante dados)
     // muda os dados e a rota e observa a comutação
     // =========================================================
-    $display("\n[CASO 4] Mudança dinâmica (dados + rota)");
+    $display("\n[CASO 4] Mudanca dinamica (dados + rota)");
     output_enable = 8'b11111111;
 
     // rota inicial sel=i
@@ -1137,7 +780,7 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 7;
 
     #1;
-    $display("out0 W8 (sel=0) antes: %02h", data_out8[0*W8 +: W8]);
+    $display("  >> out0 W8 (sel=0) antes: %02h", data_out8[0*W8 +: W8]);
 
     // muda dados "em transmissão"
     for (i = 0; i < N; i = i + 1) begin
@@ -1157,7 +800,7 @@ module tb_Crossbar_Switch;
     select[7*SELW +: SELW] = 0;
 
     #1;
-    $display("out0 W8 (sel=7) apos : %02h (deve refletir nova rota+dado)", data_out8[0*W8 +: W8]);
+    $display("  >> out0 W8 (sel=7) apos : %02h (deve refletir nova rota+dado)", data_out8[0*W8 +: W8]);
 
     #20;
 
@@ -1175,7 +818,7 @@ module tb_Crossbar_Switch;
     select[2*SELW +: SELW] = 7;
 
     #1;
-    $display("collision_error com ambos ativos (esperado 1): %b", collision_error8);
+    $display("  >> collision_error com ambos ativos (esperado 1): %b", collision_error8);
 
     // mascara: desabilita saídas com colisão
     output_enable[2] = 1'b0;
@@ -1186,14 +829,18 @@ module tb_Crossbar_Switch;
     output_enable[7] = 1'b0;
 
     #1;
-    $display("collision_error saídas colididas desativadas (esperado 0): %b", collision_error8);
+    $display("  >> collision_error saidas colididas desativadas (esperado 0): %b", collision_error8);
 
-    $display("\nFim do teste.");
+    $display("\nFim do teste.\n");
     $finish;
   end
 
 endmodule
 ```
+---
+
+**Output display terminal**
+   ![Saída txt](tb_Crossbar_switch_RESULTS_ N=8_W=8,10,16.txt)
 
 ---
 
@@ -1208,15 +855,14 @@ endmodule
     Força duas saídas habilitadas a selecionarem a mesma entrada e valida a ativação de `collision_error`.
     
 - [x]  Caso C -Habilitação/zero + colisão mascarada
-
-Valida:
-
-- precedência da lógica de `output_enable` (saída desabilitada zerada),
-- e cenário em que rotas repetidas não geram colisão quando uma das saídas está desabilitada.
+  - Valida:
+    - precedência da lógica de `output_enable` (saída desabilitada zerada),
+    - e cenário em que rotas repetidas não geram colisão quando uma das saídas está desabilitada.
 - [x]  Caso D - Mudança dinâmica de rota
     
     Altera a rota de uma saída habilitada ao longo do tempo e observa a comutação correta no DUT.
     
+---
 
 ### IDE, HDL e Simulador
 
@@ -1228,21 +874,28 @@ Valida:
     - IEEE 1364-2005 and 1364-1995 (Verilog)
     - Mentor ModelSim - Intel FPGA Starter Edition 2020.1 Rev. 2020.02 - feb, 28 2020
 
+---
+
 ### Estrutura de repositório
 
-- link: …
 
-```verilog
-CIDigital_Grupo_2_CrossBar_Switch_NxN/
-├── .gitignore               # Arquivos de simulação ignorados
-├── README.md                # Trabalho Orientado
-├── Barrel_shifter.v         # módulo de barrel shifter
-├── collision_monitor.v      # módulo de colisão          
-├── Crossbar_switch.v        # módulo top level     
-├── tb_Barrel_shifter.v      # teste unitário barrel shifter    
-├── tb_colission_monitor.v   # teste unitário de colisão
-└── tb_Crossbar_switch.v     # teste TOP LEVEL
 ```
+
+  cidigital-crossbar-switch-nxn-conflict-manager/
+  ├── .gitignore                    # Arquivos de simulação ignorados
+  ├── README.md                     # Arquitetura e Requisitos de Projeto
+  ├── Implementacao_Verilog.md      # Design e Testbenchs dos testes (waves e terminal)
+  ├── Trabalho-Orientado-Grupo2.md  # Projeto Grupo 2
+  ├── Barrel_shifter.v              # módulo de barrel shifter
+  ├── collision_monitor.v           # módulo de colisão          
+  ├── Crossbar_switch.v             # módulo top level     
+  ├── tb_Barrel_shifter.v           # teste unitário barrel shifter    
+  ├── tb_colission_monitor.v        # teste unitário de colisão
+  └── tb_Crossbar_switch.v          # teste TOP LEVEL
+
+```
+
+---
 
 # Referências bibliográficas
 
@@ -1250,3 +903,18 @@ CIDigital_Grupo_2_CrossBar_Switch_NxN/
 - **SD192 – Trabalho Orientado I** (orientações da disciplina / módulo).
 - IEEE Std 1364 — Verilog Hardware Description Language.
 - Documentação e código RTL desenvolvidos pelo grupo (módulos e testbench do projeto.
+- A. Nassar, “Design and Implementation of a Parametric Crossbar Switch Using Barrel Shifter Architecture,” M.Sc. dissertation, Dept. of Electrical Engineering, 2024.
+- J. Duato, S. Yalamanchili, and L. Ni, Interconnection Networks: An Engineering Approach, Morgan Kaufmann, 2003.
+- R. Khan, “Network-on-Chip Architectures: A Survey,” Journal of Systems Architecture, vol. 98, 2019.
+- K. Virdi et al., “Implementation of Crossbar switch for NOC on FPGA,” in 2016 International Conference on Computing for Sustainable Global Development (INDIACom), 2016.
+- N. H. E. Weste and D. Harris, CMOS VLSI Design: A Circuits and Systems Perspective, 4th ed., Addison-Wesley, 2010.
+- J. Wu and T. Feng, “On a class of nonblocking switching networks,” IEEE Transactions on Communications, vol. 28, no. 5, May 1980.
+- A. A. Khan et al., “Fault-Tolerant Buffer Aware Round Robin Arbiter Design for NoC Architectures,” International Journal of Computing and Digital Systems, vol. 8, no. 3, 2019.
+- D. Kutuzov et al., “Crossbar Switch Arbitration with Traffic Control for NoC,” in 2022 International Siberian Conference on Control and Communications (SIBCON), 2022.
+- S. Devamane et al., “Design and Implementation of FPGA based Barrel Shifter,” International Journal of Advanced Research in Computer Engineering Technology (IJARCET), vol. 4, no. 1, 2015.
+- N. McKeown, “The iSLIP scheduling algorithm for input-queued switches,” IEEE/ACM Transactions on Networking, vol. 7, no. 2, 1999.
+- W. J. Dally and B. Towles, Principles and Practices of Interconnection Networks, Morgan Kaufmann, 2004.
+- L. Benini and G. De Micheli, “Networks on chips: A new SoC paradigm,” IEEE Computer, vol. 35, no. 1, 2002.
+- A. S. P. Khope et al., “Scalable optical crossbar switch for high-radix applications,” Journal of Lightwave Technology, vol. 40, no. 6, 2022.
+- A. F. D. Rose, “Redes de interconex˜ao para sistemas paralelos e distribuidos,” Master’s thesis, PUCRS, 2001.
+- H. Ahmadi and W. E. Denzel, “A survey of modern high-performance switching techniques,” IEEE Journal on Selected Areas in Communications, vol. 7, no. 7, 1989.
