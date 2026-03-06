@@ -1,7 +1,5 @@
 # Implementação Verilog
 
----
-
 ## `barrel_shifter.v` V0 - Controle
 
 O módulo barrel shifter, de toração circular po palavras, de largura W sobre um vetor que contem N entradas.
@@ -414,9 +412,8 @@ endmodule
 
 ### Detalhes sobre as caracterísicas do Collision Monitor
 
-→ Complexidade: O(N^2)
-
-→ Número de combinações: N(N-1)/2
+- Complexidade: O(N^2)
+- Número de combinações: N(N-1)/2
 
 ```verilog
 `timescale 1ns/1ps
