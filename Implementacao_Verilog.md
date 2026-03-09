@@ -39,19 +39,19 @@ Entrada dos dados com N=8, para W=8, W=16, W=10 (sem ser potência de 2)
 
 Waves
 
-![image.png](attachment:69ac5459-8043-45b8-93a0-54be3b0d4152:b0a505fd-652d-4475-a91d-466adcf29960.png)
+![image.png](./images/b0a505fd-652d-4475-a91d-466adcf29960.png)
 
-![image.png](attachment:ccd5d4da-f418-42cf-90d0-ce957356c68f:d163bdf1-2293-4715-84df-b52d1c814897.png)
+![image.png](./images/d163bdf1-2293-4715-84df-b52d1c814897.png)
 
-![image.png](attachment:9aee8dfb-55c0-4258-a87f-bb9876684eaa:image.png)
+![image.png](./images/image.png)
 
 Para W=10 usaremos a análise em binário
 
-![image.png](attachment:c9814df8-b6b3-45f2-b434-b4303f2dd755:image.png)
+![image.png](./images/image%201.png)
 
-![image.png](attachment:457aa9f1-319a-413e-a848-ffc5b485f3af:image.png)
+![image.png](./images/image%202.png)
 
-![image.png](attachment:80e2ba9e-b735-49db-9fd0-7b847de825ae:image.png)
+![image.png](./images/image%203.png)
 
 Terminal:
 
@@ -180,7 +180,7 @@ endmodule
 
 - Eficiência < 1/n na utilização de recursos em comparação com o uso de um único barrel shifter.
 
-![Crossbar Switch N Barrel Shifters Camada Única Combinatorial EDITED.jpg](attachment:281ca31b-91f8-43e0-962f-6ec8523edbb1:Crossbar_Switch_N_Barrel_Shifters_Camada_nica_Combinatorial_EDITED.jpg)
+![Crossbar Switch N Barrel Shifters Camada Única Combinatorial EDITED.jpg](./images/Crossbar_Switch_N_Barrel_Shifters_Camada_nica_Combinatorial_EDITED.jpg)
 
 ---
 
@@ -344,7 +344,7 @@ Entrada feita por uma task que ira receber os valores auxiliares para montar o b
   endtask
 ```
 
-![image.png](attachment:aef45c1d-7483-46fb-bd16-b5704a0460bb:image.png)
+![image.png](./images/image%204.png)
 
 - **Caso 1 - Sem colisão**
     - `output_enable = 11111111` (todas as saídas habilitadas)
@@ -594,31 +594,31 @@ endmodule
 
 - Caso 1 - As saídas todas escolhem a entrada 0 (colisão)
 
-![image.png](attachment:826ecaf3-3b47-4ab8-b1b8-ce685b0feee2:image.png)
+![image.png](./images/image%205.png)
 
 - Caso 2 - Saídas escolhem as entradas dinamicamente aleatória (sem colisão). Entrada 0 → saída 7, Entrada 1 → saída 6… (não há interferência no barramento)
 
-![image.png](attachment:3491be76-94f6-4353-94bf-ed8b32289cc7:image.png)
+![image.png](./images/image%206.png)
 
 - Caso 3 - Saídas 0, 1, 2 escolhem entrada 3 (colisão)
 
-![image.png](attachment:efc1a63c-3a6f-461c-8d8b-1d2a8ec12cc5:image.png)
+![image.png](./images/image%207.png)
 
 - Caso 4 - Mudança dinâmica de rota - primeiro ponto, identidade entrada → saída
 
-![image.png](attachment:76178fec-181b-4eff-8401-061ce85cd002:image.png)
+![image.png](./images/image%208.png)
 
 - Caso 4.1 - Mudânça dinâmica de rota - desabilitando output_enable para ver saída zerada.
 
-![image.png](attachment:cf72337d-adab-44e0-9b06-4aeb4b9cd053:image.png)
+![image.png](./images/image%209.png)
 
 - Caso 4.2 -  Saída 0, 2 escolhem entrada 7, e o restante entrada 0 (Colisão)
 
-![image.png](attachment:70f97636-c73f-4e15-b4ae-adf927cd5750:image.png)
+![image.png](./images/image%2010.png)
 
 - Caso 4.3 - Desabilitando output_enable, onde há colisões, e verificando a máscara
 
-![image.png](attachment:f2645bf2-63b5-4834-973b-cf58b7c2eea1:image.png)
+![image.png](./images/image%2011.png)
 
 > Observação: Não estamos colocando N≥8. Apenas N=8, se for testar outro valor de N, é necessário que seja, potência de 2.
 > 
