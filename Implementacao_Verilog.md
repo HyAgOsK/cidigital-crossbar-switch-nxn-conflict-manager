@@ -1,5 +1,7 @@
 # Implementação Verilog
 
+---
+
 ## `barrel_shifter.v` V0 - Controle
 
 O módulo barrel shifter, de toração circular po palavras, de largura W sobre um vetor que contem N entradas.
@@ -37,83 +39,81 @@ Entrada dos dados com N=8, para W=8, W=16, W=10 (sem ser potência de 2)
 
 Waves
 
-![image.png](./images/b0a505fd-652d-4475-a91d-466adcf29960.png)
+![image.png](attachment:69ac5459-8043-45b8-93a0-54be3b0d4152:b0a505fd-652d-4475-a91d-466adcf29960.png)
 
-![image.png](./images/d163bdf1-2293-4715-84df-b52d1c814897.png)
+![image.png](attachment:ccd5d4da-f418-42cf-90d0-ce957356c68f:d163bdf1-2293-4715-84df-b52d1c814897.png)
 
-![image.png](./images/image.png)
+![image.png](attachment:9aee8dfb-55c0-4258-a87f-bb9876684eaa:image.png)
 
 Para W=10 usaremos a análise em binário
 
-![image.png](./images/image%201.png)
+![image.png](attachment:c9814df8-b6b3-45f2-b434-b4303f2dd755:image.png)
 
-![image.png](./images/image%202.png)
+![image.png](attachment:457aa9f1-319a-413e-a848-ffc5b485f3af:image.png)
 
-![image.png](./images/image%203.png)
+![image.png](attachment:80e2ba9e-b735-49db-9fd0-7b847de825ae:image.png)
 
 Terminal:
 
-    -- Caso 1: N=8, W=8 ---
+-- Caso 1: N=8, W=8 ---
 
-    in : 00 01 02 03 04 05 06 07
+in : 00 01 02 03 04 05 06 07
 
-    sh=0 | out : 00 01 02 03 04 05 06 07
+sh=0 | out : 00 01 02 03 04 05 06 07
 
-    sh=1 | out : 01 02 03 04 05 06 07 00
+sh=1 | out : 01 02 03 04 05 06 07 00
 
-    sh=2 | out : 02 03 04 05 06 07 00 01
+sh=2 | out : 02 03 04 05 06 07 00 01
 
-    sh=3 | out : 03 04 05 06 07 00 01 02
+sh=3 | out : 03 04 05 06 07 00 01 02
 
-    sh=4 | out : 04 05 06 07 00 01 02 03
+sh=4 | out : 04 05 06 07 00 01 02 03
 
-    sh=5 | out : 05 06 07 00 01 02 03 04
+sh=5 | out : 05 06 07 00 01 02 03 04
 
-    sh=6 | out : 06 07 00 01 02 03 04 05
+sh=6 | out : 06 07 00 01 02 03 04 05
 
-    sh=7 | out : 07 00 01 02 03 04 05 06
+sh=7 | out : 07 00 01 02 03 04 05 06
 
-    -- Caso 2: N=8, W=16 ---
+-- Caso 2: N=8, W=16 ---
 
-    in : 1000 1001 1002 1003 1004 1005 1006 1007
+in : 1000 1001 1002 1003 1004 1005 1006 1007
 
-    sh=0 | out : 1000 1001 1002 1003 1004 1005 1006 1007
+sh=0 | out : 1000 1001 1002 1003 1004 1005 1006 1007
 
-    sh=1 | out : 1001 1002 1003 1004 1005 1006 1007 1000
+sh=1 | out : 1001 1002 1003 1004 1005 1006 1007 1000
 
-    sh=2 | out : 1002 1003 1004 1005 1006 1007 1000 1001
+sh=2 | out : 1002 1003 1004 1005 1006 1007 1000 1001
 
-    sh=3 | out : 1003 1004 1005 1006 1007 1000 1001 1002
+sh=3 | out : 1003 1004 1005 1006 1007 1000 1001 1002
 
-    sh=4 | out : 1004 1005 1006 1007 1000 1001 1002 1003
+sh=4 | out : 1004 1005 1006 1007 1000 1001 1002 1003
 
-    sh=5 | out : 1005 1006 1007 1000 1001 1002 1003 1004
+sh=5 | out : 1005 1006 1007 1000 1001 1002 1003 1004
 
-    sh=6 | out : 1006 1007 1000 1001 1002 1003 1004 1005
+sh=6 | out : 1006 1007 1000 1001 1002 1003 1004 1005
 
-    sh=7 | out : 1007 1000 1001 1002 1003 1004 1005 1006
+sh=7 | out : 1007 1000 1001 1002 1003 1004 1005 1006
 
-    -- Caso 3: N=8, W=10 ---
+-- Caso 3: N=8, W=10 ---
 
-    in : 100 101 102 103 104 105 106 107
+in : 100 101 102 103 104 105 106 107
 
-    sh=0 | out : 100 101 102 103 104 105 106 107
+sh=0 | out : 100 101 102 103 104 105 106 107
 
-    sh=1 | out : 101 102 103 104 105 106 107 100
+sh=1 | out : 101 102 103 104 105 106 107 100
 
-    sh=2 | out : 102 103 104 105 106 107 100 101
+sh=2 | out : 102 103 104 105 106 107 100 101
 
-    sh=3 | out : 103 104 105 106 107 100 101 102
+sh=3 | out : 103 104 105 106 107 100 101 102
 
-    sh=4 | out : 104 105 106 107 100 101 102 103
+sh=4 | out : 104 105 106 107 100 101 102 103
 
-    sh=5 | out : 105 106 107 100 101 102 103 104
+sh=5 | out : 105 106 107 100 101 102 103 104
 
-    sh=6 | out : 106 107 100 101 102 103 104 105
+sh=6 | out : 106 107 100 101 102 103 104 105
 
-    sh=7 | out : 107 100 101 102 103 104 105 106
-
-## Modulo barrel_shifter
+sh=7 | out : 107 100 101 102 103 104 105 106
 
 ```verilog
 module barrel_shifter #(
@@ -180,13 +180,9 @@ endmodule
 
 - Eficiência < 1/n na utilização de recursos em comparação com o uso de um único barrel shifter.
 
-![Crossbar Switch N Barrel Shifters Camada Única Combinatorial EDITED.jpg](./images/Crossbar_Switch_N_Barrel_Shifters_Camada_nica_Combinatorial_EDITED.jpg)
-
-
+![Crossbar Switch N Barrel Shifters Camada Única Combinatorial EDITED.jpg](attachment:281ca31b-91f8-43e0-962f-6ec8523edbb1:Crossbar_Switch_N_Barrel_Shifters_Camada_nica_Combinatorial_EDITED.jpg)
 
 ---
-
-## Testbench BarrelShifter
 
 ```verilog
 //@Hyago
@@ -348,7 +344,7 @@ Entrada feita por uma task que ira receber os valores auxiliares para montar o b
   endtask
 ```
 
-![image.png](./images/image%204.png)
+![image.png](attachment:aef45c1d-7483-46fb-bd16-b5704a0460bb:image.png)
 
 - **Caso 1 - Sem colisão**
     - `output_enable = 11111111` (todas as saídas habilitadas)
@@ -412,8 +408,9 @@ endmodule
 
 ### Detalhes sobre as caracterísicas do Collision Monitor
 
-- Complexidade: O(N^2)
-- Número de combinações: N(N-1)/2
+→ Complexidade: O(N^2)
+
+→ Número de combinações: N(N-1)/2
 
 ```verilog
 `timescale 1ns/1ps
@@ -495,9 +492,39 @@ module tb_collision_monitor;
 
 endmodule
 ```
+
 ---
 
-### **Crossbar Switch NxN de N=8 e W≥8.**
+## `crossbar_nxn` - Dados
+
+Este é o módulo top Level, de um Crossbar Switch NxN, que roteia N entradas de dados para N saídas, com os requisitos que foi solicitado no Tema deste Projeto:
+
+- [x]  Seleção indendente por saída (cada saída escolhe qual entrada quer).
+- [x]  enable individual, por saída (pode desligar uma saída para “mascarar colisão, ou ativar”.
+- [x]  detecção global de colisão (se duas saídas ou mais escolherem a mesma entrada)
+
+### Entradas
+
+- `data_in [N*W-1:0]`  É o barramento de entrada que contém N palavras de W bits concatenados.
+- `select [N*log2(N)-1:0]` Vetor com N seletores, um por saída (Barrel Shifter).
+- `output_enable [N-1:0]` Enable individual por saída, caso no índice do vetor, esteja “1”, indica que esta ativo (roteia o dado selecionado) caso contrário “0”, saída forçada para zero.
+
+### Saídas
+
+- `data_out [N*W-1:0]` Barramento com N palavras de W bits cada, por saída.
+- `collision_error` Flag global que indica erro, igual anteriormente, “1” se duas ou mais saídas escolherem a mesma entrada, e “0”, se as seleções forem únicas.
+
+O módulo instancia inicialmente o `collision_monitor` e elecompara todos os seletores dentro de select, e levanta `collision_error` se houver repetição.
+
+Basicamente 1 barrel shifter por saída (uma linha por saída usando barrel shifter. Para cada saída i, (loop generate):
+
+→ Extraímos o seletor da saída com `sel`
+
+→ Rodamos o barrel Shifter, do barramento inteiro (`data_in`) usando `sel`
+
+Barrel Shifter rotaciona os N blocos de `data_in`  de forma circular. Com o comportamento esperado de um claássico Barrel Shifter.
+
+Depois disso, pega a posição 0 do barramento rotacionado, que passa a ser exatamente a entrada selecionada, sendo `shifted_bus[0*W +: W].`  Caso o `output_enable` estiver ativo, caso contrário concatena com zero.
 
 ```verilog
 module crossbar_switch #(
@@ -545,6 +572,9 @@ module crossbar_switch #(
 
 endmodule
 ```
+
+---
+
 ---
 
 ## Testbench `tb_crossbar_nxn.v` @Hyago Vieira
@@ -564,39 +594,152 @@ endmodule
 
 - Caso 1 - As saídas todas escolhem a entrada 0 (colisão)
 
-![image.png](./images/image%2016.png)
+![image.png](attachment:826ecaf3-3b47-4ab8-b1b8-ce685b0feee2:image.png)
 
 - Caso 2 - Saídas escolhem as entradas dinamicamente aleatória (sem colisão). Entrada 0 → saída 7, Entrada 1 → saída 6… (não há interferência no barramento)
 
-![image.png](./images/image%2017.png)
+![image.png](attachment:3491be76-94f6-4353-94bf-ed8b32289cc7:image.png)
 
 - Caso 3 - Saídas 0, 1, 2 escolhem entrada 3 (colisão)
 
-![image.png](./images/image%2018.png)
+![image.png](attachment:efc1a63c-3a6f-461c-8d8b-1d2a8ec12cc5:image.png)
 
 - Caso 4 - Mudança dinâmica de rota - primeiro ponto, identidade entrada → saída
 
-![image.png](./images/image%2019.png)
+![image.png](attachment:76178fec-181b-4eff-8401-061ce85cd002:image.png)
 
 - Caso 4.1 - Mudânça dinâmica de rota - desabilitando output_enable para ver saída zerada.
 
-![image.png](./images/image%2020.png)
+![image.png](attachment:cf72337d-adab-44e0-9b06-4aeb4b9cd053:image.png)
 
 - Caso 4.2 -  Saída 0, 2 escolhem entrada 7, e o restante entrada 0 (Colisão)
 
-![image.png](./images/image%2021.png)
+![image.png](attachment:70f97636-c73f-4e15-b4ae-adf927cd5750:image.png)
 
 - Caso 4.3 - Desabilitando output_enable, onde há colisões, e verificando a máscara
 
-![image.png](./images/image%2022.png)
+![image.png](attachment:f2645bf2-63b5-4834-973b-cf58b7c2eea1:image.png)
 
-> Observação: Não estamos colocando N≥8. Apenas N=8, se for testar outro valor de N, é necessário que seja, expoente de 2. Ex:  2^2 = 4, 2^3 = 8 ...
+> Observação: Não estamos colocando N≥8. Apenas N=8, se for testar outro valor de N, é necessário que seja, potência de 2.
+> 
+
+2^2 = 4
+
+2^3 = 8
+
+2^4 = 16…
 
 > Caso N seja um número que não seja inteiro na equação que possui o shift dos dados com barrel shifter, log2(N) teremos um valor fracionado. E isto não foi algo definido no projeto.
+> 
 
+### Saída vsim:
 
-## Testbench Crossbar Switch top level
+=== TB CROSSBAR SIMPLES (N=8 | W=8,16,10) ===
+
+Tempo: 0ns | Rotas: {0.0.0.0.0.0.0.0} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {17.16.15.14.13.12.11.10} | Data Out: {10.10.10.10.10.10.10.10} | Collision Error: 1
+
+>> (W=16) Data In: {1007.1006.1005.1004.1003.1002.1001.1000} | Data Out: {1000.1000.1000.1000.1000.1000.1000.1000} | Collision Error: 1
+
+>> (W=10) Data In: {107.106.105.104.103.102.101.100} | Data Out: {100.100.100.100.100.100.100.100} | Collision Error: 1
+
+[CASO 1] Roteamento paralelo (sem colisao)
+
+Tempo: 5ns | Rotas: {1.3.2.0.4.5.6.7} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {17.16.15.14.13.12.11.10} | Data Out: {11.13.12.10.14.15.16.17} | Collision Error: 0
+
+>> (W=16) Data In: {1007.1006.1005.1004.1003.1002.1001.1000} | Data Out: {1001.1003.1002.1000.1004.1005.1006.1007} | Collision Error: 0
+
+>> (W=10) Data In: {107.106.105.104.103.102.101.100} | Data Out: {101.103.102.100.104.105.106.107} | Collision Error: 0
+
+>> collision_error (esperado 0): 0
+
+[CASO 2] Conflito (0,1,2 -> 3)
+
+Tempo: 26ns | Rotas: {0.0.0.0.0.3.3.3} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {17.16.15.14.13.12.11.10} | Data Out: {10.10.10.10.10.13.13.13} | Collision Error: 1
+
+>> (W=16) Data In: {1007.1006.1005.1004.1003.1002.1001.1000} | Data Out: {1000.1000.1000.1000.1000.1003.1003.1003} | Collision Error: 1
+
+>> (W=10) Data In: {107.106.105.104.103.102.101.100} | Data Out: {100.100.100.100.100.103.103.103} | Collision Error: 1
+
+>> collision_error (esperado 1): 1
+
+[CASO 3] Enable em tempo real (desabilita out4)
+
+Tempo: 47ns | Rotas: {7.6.5.4.3.2.1.0} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {17.16.15.14.13.12.11.10} | Data Out: {17.16.15.14.13.12.11.10} | Collision Error: 0
+
+>> (W=16) Data In: {1007.1006.1005.1004.1003.1002.1001.1000} | Data Out: {1007.1006.1005.1004.1003.1002.1001.1000} | Collision Error: 0
+
+>> (W=10) Data In: {107.106.105.104.103.102.101.100} | Data Out: {107.106.105.104.103.102.101.100} | Collision Error: 0
+
+>> out4 W8 antes disable : 14
+
+Tempo: 48ns | Rotas: {7.6.5.4.3.2.1.0} | Output Enable: {1110.1111}
+
+>> (W=8) Data In: {17.16.15.14.13.12.11.10} | Data Out: {17.16.15.00.13.12.11.10} | Collision Error: 0
+
+>> (W=16) Data In: {1007.1006.1005.1004.1003.1002.1001.1000} | Data Out: {1007.1006.1005.0000.1003.1002.1001.1000} | Collision Error: 0
+
+>> (W=10) Data In: {107.106.105.104.103.102.101.100} | Data Out: {107.106.105.000.103.102.101.100} | Collision Error: 0
+
+>> out4 W8 apos disable : 00 (esperado 00)
+
+Tempo: 49ns | Rotas: {7.6.5.4.3.2.1.0} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {17.16.15.14.13.12.11.10} | Data Out: {17.16.15.14.13.12.11.10} | Collision Error: 0
+
+>> (W=16) Data In: {1007.1006.1005.1004.1003.1002.1001.1000} | Data Out: {1007.1006.1005.1004.1003.1002.1001.1000} | Collision Error: 0
+
+>> (W=10) Data In: {107.106.105.104.103.102.101.100} | Data Out: {107.106.105.104.103.102.101.100} | Collision Error: 0
+
+>> out4 W8 reenable : 14 (volta ao valor)
+
+[CASO 4] Mudanca dinamica (dados + rota)
+
+>> out0 W8 (sel=0) antes: 10
+
+Tempo: 71ns | Rotas: {0.1.2.3.4.5.6.7} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {37.36.35.34.33.32.31.30} | Data Out: {30.31.32.33.34.35.36.37} | Collision Error: 0
+
+>> (W=16) Data In: {1027.1026.1025.1024.1023.1022.1021.1020} | Data Out: {1020.1021.1022.1023.1024.1025.1026.1027} | Collision Error: 0
+
+>> (W=10) Data In: {127.126.125.124.123.122.121.120} | Data Out: {120.121.122.123.124.125.126.127} | Collision Error: 0
+
+>> out0 W8 (sel=7) apos : 37 (deve refletir nova rota+dado)
+
+[CASO EXTRA] output_enable mascarando colisao
+
+Tempo: 92ns | Rotas: {0.0.0.0.0.7.0.7} | Output Enable: {1111.1111}
+
+>> (W=8) Data In: {37.36.35.34.33.32.31.30} | Data Out: {30.30.30.30.30.37.30.37} | Collision Error: 1
+
+>> (W=16) Data In: {1027.1026.1025.1024.1023.1022.1021.1020} | Data Out: {1020.1020.1020.1020.1020.1027.1020.1027} | Collision Error: 1
+
+>> (W=10) Data In: {127.126.125.124.123.122.121.120} | Data Out: {120.120.120.120.120.127.120.127} | Collision Error: 1
+
+>> collision_error com ambos ativos (esperado 1): 1
+
+Tempo: 93ns | Rotas: {0.0.0.0.0.7.0.7} | Output Enable: {0000.0011}
+
+>> (W=8) Data In: {37.36.35.34.33.32.31.30} | Data Out: {00.00.00.00.00.00.30.37} | Collision Error: 0
+
+>> (W=16) Data In: {1027.1026.1025.1024.1023.1022.1021.1020} | Data Out: {0000.0000.0000.0000.0000.0000.1020.1027} | Collision Error: 0
+
+>> (W=10) Data In: {127.126.125.124.123.122.121.120} | Data Out: {000.000.000.000.000.000.120.127} | Collision Error: 0
+
+>> collision_error saidas colididas desativadas (esperado 0): 0
+
+Fim do teste.
+
 ```verilog
+//@Hyago
 `timescale 1ns/1ns
 
 module tb_Crossbar_Switch;
@@ -834,10 +977,6 @@ module tb_Crossbar_Switch;
 
 endmodule
 ```
----
-
-**Output display terminal**
-   ![Saída txt](tb_Crossbar_switch_RESULTS_ N=8_W=8,10,16.txt)
 
 ---
 
@@ -852,14 +991,15 @@ endmodule
     Força duas saídas habilitadas a selecionarem a mesma entrada e valida a ativação de `collision_error`.
     
 - [x]  Caso C -Habilitação/zero + colisão mascarada
-  - Valida:
-    - precedência da lógica de `output_enable` (saída desabilitada zerada),
-    - e cenário em que rotas repetidas não geram colisão quando uma das saídas está desabilitada.
+
+Valida:
+
+- precedência da lógica de `output_enable` (saída desabilitada zerada),
+- e cenário em que rotas repetidas não geram colisão quando uma das saídas está desabilitada.
 - [x]  Caso D - Mudança dinâmica de rota
     
     Altera a rota de uma saída habilitada ao longo do tempo e observa a comutação correta no DUT.
     
----
 
 ### IDE, HDL e Simulador
 
@@ -871,28 +1011,6 @@ endmodule
     - IEEE 1364-2005 and 1364-1995 (Verilog)
     - Mentor ModelSim - Intel FPGA Starter Edition 2020.1 Rev. 2020.02 - feb, 28 2020
 
----
-
-### Estrutura de repositório
-
-
-```
-
-  cidigital-crossbar-switch-nxn-conflict-manager/
-  ├── .gitignore                    # Arquivos de simulação ignorados
-  ├── README.md                     # Arquitetura e Requisitos de Projeto
-  ├── Implementacao_Verilog.md      # Design e Testbenchs dos testes (waves e terminal)
-  ├── Trabalho-Orientado-Grupo2.md  # Projeto Grupo 2
-  ├── Barrel_shifter.v              # módulo de barrel shifter
-  ├── collision_monitor.v           # módulo de colisão          
-  ├── Crossbar_switch.v             # módulo top level     
-  ├── tb_Barrel_shifter.v           # teste unitário barrel shifter    
-  ├── tb_colission_monitor.v        # teste unitário de colisão
-  └── tb_Crossbar_switch.v          # teste TOP LEVEL
-
-```
-
----
 
 # Referências bibliográficas
 
