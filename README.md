@@ -60,6 +60,8 @@ O grupo deve fornecer os seguintes itens para avaliação:
 
 ![Esquemático](./images/RTL_Map.png)
 
+---
+
 # Arquitetura:
 
 https://excalidraw.com/#json=U3v6aLyHEkSc9oEpx_GAO,xqwJxPkm8C-Xie3GAvHaMQ
