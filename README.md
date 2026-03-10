@@ -53,6 +53,12 @@ O grupo deve fornecer os seguintes itens para avaliação:
             - [x]  Alterar a configuração de rota durante a transmissão de dados e observar a comutação correta no diagrama de tempos.
 - [x]  Diagrama de Blocos:
     - [x]  Representação visual detalhada da arquitetura interna implementada e do fluxo de dados.
+---
+# Esquemático sintetizável (TOP-Level)
+**Quartus Prime Lite - Versão: 20.1.1.720**
+**FPGA:  MAX10:10M08DAF484C8G**
+
+![Esquemático](./images/RTL Map.png)
 
 # Arquitetura:
 
