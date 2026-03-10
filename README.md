@@ -58,7 +58,7 @@ O grupo deve fornecer os seguintes itens para avaliação:
 **Quartus Prime Lite - Versão: 20.1.1.720**
 **FPGA:  MAX10:10M08DAF484C8G**
 
-![Esquemático](./images/RTL Map.png)
+![Esquemático](./images/RTL_Map.png)
 
 # Arquitetura:
 
