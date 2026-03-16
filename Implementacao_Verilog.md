@@ -620,17 +620,6 @@ endmodule
 
 ![image.png](./images/image%2011.png)
 
-> Observação: Não estamos colocando N≥8. Apenas N=8, se for testar outro valor de N, é necessário que seja, potência de 2.
-> 
-
-2^2 = 4
-
-2^3 = 8
-
-2^4 = 16…
-
-> Caso N seja um número que não seja inteiro na equação que possui o shift dos dados com barrel shifter, log2(N) teremos um valor fracionado. E isto não foi algo definido no projeto.
-> 
 
 ### Saída vsim:
 
